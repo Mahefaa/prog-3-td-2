@@ -1,12 +1,12 @@
 package app.foot.service;
 
+import app.foot.exception.NotFoundException;
 import app.foot.model.Match;
 import app.foot.model.PlayerScorer;
 import app.foot.repository.MatchRepository;
 import app.foot.repository.entity.MatchEntity;
 import app.foot.repository.mapper.MatchMapper;
 import java.util.List;
-import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,10 +24,12 @@ public class MatchService {
   }
 
   public Match getMatchById(int matchId) {
-    return mapper.toDomain(
-        repository.findById(matchId)
-            .orElseThrow(() -> new RuntimeException("Match#" + matchId + " not found."))
-    );
+    return mapper.toDomain(getMatchEntityById(matchId));
+  }
+
+  public MatchEntity getMatchEntityById(int matchId) {
+    return repository.findById(matchId)
+        .orElseThrow(() -> new NotFoundException("Match#" + matchId + " not found."));
   }
 
   public Match addGoals(int matchId, List<PlayerScorer> scorers) {
